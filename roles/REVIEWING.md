@@ -30,12 +30,30 @@ When reviewing a PR, read ONLY these additional documents:
 
 ## Posting Comments
 
-Post a pull request review with inline comments via `gh api`. When submitting GitHub PR reviews on the user's own PRs, always use review type `COMMENT` (not `APPROVE` or `REQUEST_CHANGES`), as GitHub disallows approving or requesting changes on your own PRs.
+When submitting GitHub PR reviews on the user's own PRs, always use event `COMMENT` (not `APPROVE` or `REQUEST_CHANGES`), as GitHub disallows approving or requesting changes on your own PRs.
+
+Write a JSON file and pass it via `--input`. Do NOT use `-f` flags for reviews with inline comments — the nested `comments` array cannot be constructed with `-f`.
+
+```bash
+cat > /tmp/review.json << 'EOF'
+{
+  "event": "COMMENT",
+  "body": "Brief summary of review findings.",
+  "comments": [
+    {
+      "path": "internal/config/validate.go",
+      "line": 42,
+      "body": "Short, explicit comment with code example if needed."
+    }
+  ]
+}
+EOF
+gh api repos/{owner}/{repo}/pulls/{number}/reviews --method POST --input /tmp/review.json
+```
 
 - Each comment should be short, explicit, and aligned with the code
 - Include a code example if the fix isn't obvious
 - The summary comment should be brief and not duplicate inline comments
-- If no issues found, approve the PR
 
 ## What to Check
 
