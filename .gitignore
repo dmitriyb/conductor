@@ -1,0 +1,11 @@
+# Binary
+conductor
+
+# Test binary
+*.test
+
+# Coverage
+*.out
+
+# Dependency directory
+vendor/
