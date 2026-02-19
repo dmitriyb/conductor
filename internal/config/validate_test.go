@@ -80,6 +80,13 @@ func TestFR3_RequiredFields(t *testing.T) {
 			wantErr: "pipeline[0].name: required",
 		},
 		{
+			name: "missing pipeline step agent",
+			mutate: func(c *Config) {
+				c.Pipeline = []StepDef{{Name: "build"}}
+			},
+			wantErr: "pipeline[0].agent: required",
+		},
+		{
 			name: "missing agent prompt.system",
 			mutate: func(c *Config) {
 				c.Agents = map[string]AgentDef{

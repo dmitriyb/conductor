@@ -37,6 +37,7 @@ func Validate(cfg *Config) error {
 	for i, step := range cfg.Pipeline {
 		p := fmt.Sprintf("pipeline[%d]", i)
 		check(step.Name != "", p+".name", "required")
+		check(step.Agent != "", p+".agent", "required")
 		if step.Agent != "" {
 			_, ok := cfg.Agents[step.Agent]
 			check(ok, p+".agent", fmt.Sprintf("references undefined agent %q", step.Agent))
