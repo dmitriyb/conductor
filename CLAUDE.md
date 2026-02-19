@@ -22,6 +22,17 @@ Conductor is a configuration-driven CLI tool that orchestrates Claude Code agent
 - **No global state**: Config passed explicitly, loggers created per component
 - **Secret hygiene**: Credentials never written to disk, only to `/dev/shm` (RAM-backed tmpfs)
 
+## Build & Test
+
+- Build and test: `go test ./...`
+- Vet: `go vet ./...`
+
+## Git Conventions
+
+- Default branch is `main` (never `master`)
+- Always `git fetch origin` before creating a new branch
+- Always branch from `origin/main`, not from the current branch
+
 ## Organizational Constraints
 
 - **Module dependency order**: config → infra → agent → pipeline, implemented in that order
@@ -30,7 +41,7 @@ Conductor is a configuration-driven CLI tool that orchestrates Claude Code agent
 
 ## Where to Find Details
 
-- **Roles**: `roles/` — PLANNING.md, IMPLEMENTING.md, REVIEWING.md (not auto-loaded; reference with `@roles/X.md` when needed)
+- **Skills**: `.claude/skills/` — `/implement`, `/review`, `/fix`, `/plan` commands
 - **Requirements**: `spec/*_reqs.md` — functional and non-functional requirements per module
 - **Architecture**: `spec/*_arch.md` — design decisions, data flow, component interactions
 - **Implementation details**: `spec/*_impl.md` — data structures, algorithms, code examples
