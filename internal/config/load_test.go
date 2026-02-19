@@ -1,6 +1,7 @@
 package config
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -133,12 +134,7 @@ func TestNFR2_LoadNoSideEffects(t *testing.T) {
 	if err2 != nil {
 		t.Fatalf("second Load: %v", err2)
 	}
-	if cfg1.Project.Name != cfg2.Project.Name {
-		t.Errorf("consecutive loads returned different Project.Name: %q vs %q",
-			cfg1.Project.Name, cfg2.Project.Name)
-	}
-	if cfg1.Credentials.Backend != cfg2.Credentials.Backend {
-		t.Errorf("consecutive loads returned different Credentials.Backend: %q vs %q",
-			cfg1.Credentials.Backend, cfg2.Credentials.Backend)
+	if !reflect.DeepEqual(cfg1, cfg2) {
+		t.Error("consecutive loads returned different Config values")
 	}
 }
