@@ -56,17 +56,12 @@ func TestFR5_LevelParsing(t *testing.T) {
 	}
 }
 
-// TestFR5_NonTTYUsesJSONHandler verifies that when stderr is not a TTY
-// (as in tests), the handler produces JSON output.
+// TestFR5_NonTTYUsesJSONHandler verifies that newHandler with isTTY=false
+// produces JSON output.
 func TestFR5_NonTTYUsesJSONHandler(t *testing.T) {
-	// In test environments stderr is not a TTY, so InitLogging should
-	// select the JSON handler. Verify by creating a logger that writes
-	// to a buffer with the same handler type selection logic.
 	var buf bytes.Buffer
 	opts := &slog.HandlerOptions{Level: slog.LevelInfo}
-	// Test environment is not a TTY, so InitLogging uses JSON handler.
-	// We verify by constructing the same handler and checking output format.
-	h := slog.NewJSONHandler(&buf, opts)
+	h := newHandler(&buf, false, opts)
 	logger := slog.New(h)
 	logger.Info("test message", "key", "value")
 
@@ -79,12 +74,12 @@ func TestFR5_NonTTYUsesJSONHandler(t *testing.T) {
 	}
 }
 
-// TestFR5_TTYUsesTextHandler verifies that the text handler produces
-// non-JSON key=value output.
+// TestFR5_TTYUsesTextHandler verifies that newHandler with isTTY=true
+// produces non-JSON key=value output.
 func TestFR5_TTYUsesTextHandler(t *testing.T) {
 	var buf bytes.Buffer
 	opts := &slog.HandlerOptions{Level: slog.LevelInfo}
-	h := slog.NewTextHandler(&buf, opts)
+	h := newHandler(&buf, true, opts)
 	logger := slog.New(h)
 	logger.Info("test message", "key", "value")
 
@@ -103,7 +98,7 @@ func TestFR5_TTYUsesTextHandler(t *testing.T) {
 func TestFR5_ComponentAttribute(t *testing.T) {
 	var buf bytes.Buffer
 	opts := &slog.HandlerOptions{Level: slog.LevelInfo}
-	h := slog.NewJSONHandler(&buf, opts)
+	h := newHandler(&buf, false, opts)
 	logger := slog.New(h)
 
 	compLogger := logger.With("component", "agent")
