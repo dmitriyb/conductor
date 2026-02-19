@@ -120,6 +120,7 @@ func TestFR1_StructFieldTypes(t *testing.T) {
 		{"Docker.BuildArgs", reflect.TypeOf(Docker{}), "BuildArgs", reflect.Map, "string"},
 		{"AgentDef.Tools", reflect.TypeOf(AgentDef{}), "Tools", reflect.Slice, "string"},
 		{"StepDef.DependsOn", reflect.TypeOf(StepDef{}), "DependsOn", reflect.Slice, "string"},
+		{"AgentDef.OutputSchema", reflect.TypeOf(AgentDef{}), "OutputSchema", reflect.Map, ""},
 	}
 
 	for _, tt := range tests {
