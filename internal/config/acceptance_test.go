@@ -1,7 +1,9 @@
 package config
 
 import (
+	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -168,9 +170,10 @@ func TestFR1_FR2_ConfigRoundTripFidelity(t *testing.T) {
 }
 
 // TestNFR2_LoadPureFunction verifies that Load is a pure function of file
-// contents — loading the same file twice produces identical results with no
-// observable side effects (no network calls, no environment variable reads).
+// contents — loading the same file twice produces identical results, and
+// environment variables do not leak into the loaded config.
 func TestNFR2_LoadPureFunction(t *testing.T) {
+	// Idempotency: consecutive loads produce identical Config.
 	cfg1, err := Load("testdata/valid.yaml")
 	if err != nil {
 		t.Fatalf("first Load: %v", err)
@@ -181,5 +184,20 @@ func TestNFR2_LoadPureFunction(t *testing.T) {
 	}
 	if !reflect.DeepEqual(cfg1, cfg2) {
 		t.Error("consecutive loads of the same file returned different Config values")
+	}
+
+	// Environment isolation: env vars must not appear in loaded config.
+	const canary = "CONDUCTOR_TEST_CANARY"
+	t.Setenv(canary, "injected")
+	cfg3, err := Load("testdata/valid.yaml")
+	if err != nil {
+		t.Fatalf("Load after setenv: %v", err)
+	}
+	if !reflect.DeepEqual(cfg1, cfg3) {
+		t.Error("Load produced different Config after setting environment variable")
+	}
+	// Belt-and-suspenders: verify canary string doesn't appear in any string field.
+	if s := fmt.Sprintf("%+v", cfg3); strings.Contains(s, "injected") {
+		t.Error("canary value 'injected' found in Config after setting env var")
 	}
 }
