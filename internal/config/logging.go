@@ -10,13 +10,16 @@ import (
 )
 
 // InitLogging creates a *slog.Logger configured for the given level string.
-// It uses a text handler when stderr is a TTY, and a JSON handler otherwise.
+// It uses a text handler when w is a TTY, and a JSON handler otherwise.
 // Supported levels: debug, info, warn, error. Unknown levels default to info.
-func InitLogging(level string) *slog.Logger {
+func InitLogging(level string, w io.Writer) *slog.Logger {
 	lvl := parseLevel(level)
 	opts := &slog.HandlerOptions{Level: lvl}
-	isTTY := term.IsTerminal(int(os.Stderr.Fd()))
-	h := newHandler(os.Stderr, isTTY, opts)
+	isTTY := false
+	if f, ok := w.(*os.File); ok {
+		isTTY = term.IsTerminal(int(f.Fd()))
+	}
+	h := newHandler(w, isTTY, opts)
 	return slog.New(h)
 }
 

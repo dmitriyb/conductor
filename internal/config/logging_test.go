@@ -3,6 +3,7 @@ package config
 import (
 	"bytes"
 	"encoding/json"
+	"io"
 	"log/slog"
 	"strings"
 	"testing"
@@ -14,7 +15,7 @@ func TestFR5_InitLoggingReturnsLogger(t *testing.T) {
 	levels := []string{"debug", "info", "warn", "error", "INFO", "Debug", "unknown", ""}
 	for _, level := range levels {
 		t.Run(level, func(t *testing.T) {
-			logger := InitLogging(level)
+			logger := InitLogging(level, io.Discard)
 			if logger == nil {
 				t.Fatal("InitLogging returned nil")
 			}
@@ -40,7 +41,7 @@ func TestFR5_LevelParsing(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			logger := InitLogging(tt.level)
+			logger := InitLogging(tt.level, io.Discard)
 			if !logger.Enabled(nil, tt.wantLevel) {
 				t.Errorf("level %s should be enabled for input %q", tt.wantLevel, tt.level)
 			}
@@ -120,7 +121,7 @@ func TestFR5_ComponentAttribute(t *testing.T) {
 // default slog logger (D3 requirement).
 func TestFR5_NoGlobalLoggerState(t *testing.T) {
 	defaultBefore := slog.Default()
-	_ = InitLogging("info")
+	_ = InitLogging("info", io.Discard)
 	defaultAfter := slog.Default()
 	if defaultBefore != defaultAfter {
 		t.Error("InitLogging must not call slog.SetDefault")
