@@ -41,7 +41,7 @@ func run(args []string, stdout, stderr io.Writer) int {
 		return 1
 	}
 
-	logger := config.InitLogging(*logLevel)
+	logger := config.InitLogging(*logLevel, stderr)
 
 	cfg, err := config.Load(*cfgPath)
 	if err != nil {

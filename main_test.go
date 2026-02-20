@@ -68,14 +68,7 @@ func TestFR4_ValidateDefaultConfig(t *testing.T) {
 	}
 
 	// Change to the temp directory so the default path resolves.
-	orig, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("getwd: %v", err)
-	}
-	if err := os.Chdir(dir); err != nil {
-		t.Fatalf("chdir: %v", err)
-	}
-	t.Cleanup(func() { os.Chdir(orig) })
+	t.Chdir(dir)
 
 	var stdout, stderr bytes.Buffer
 	code := run([]string{"validate"}, &stdout, &stderr)
